@@ -1,0 +1,45 @@
+{
+  "name": "tos-bot",
+  "version": "0.1.0",
+  "description": "A Discord Bot that handles the ins and outs of moderation - Continuation of https://github.com/Jabrils-Discord-Server/ToS-Bot",
+  "main": "ToS-Bot.js",
+  "scripts": {
+    "start": "node .",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sv443/ToS-Bot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord-js",
+    "javascript",
+    "node",
+    "admin",
+    "moderation"
+  ],
+  "author": {
+    "name": "Sv443",
+    "url": "https://github.com/Sv443",
+    "email": "sven.fehler@web.de"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sv443/ToS-Bot/issues"
+  },
+  "homepage": "https://github.com/Sv443/ToS-Bot#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "dependencies": {
+    "discord.js": "^12.0.2",
+    "dotenv": "^8.2.0",
+    "mysql": "^2.18.1",
+    "node-wrap": "^0.2.0",
+    "svjsl": "^1.9.2",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
