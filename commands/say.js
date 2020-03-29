@@ -37,6 +37,7 @@ function run(client, message, args)
                     message.reply(`Error: ${err}`);
                 });
             });
+        else message.reply(`I am missing the permission to manage messages or send messages. Please contact the administrator(s) of this server.`).catch(() => {});
     }
     catch(err)
     {

@@ -10,10 +10,14 @@ const settings = {
         permissionInteger: 1565518966,
         developerIDs: [
             "415597358752071693"
-        ]
+        ],
+        defaultPrefix: "tos"
     },
     commands: {
-        folder: resolve("./commands")
+        folder: resolve("./commands"),
+        rm: {
+            maxAmount: 100
+        }
     },
     events: {
         folder: resolve("./events")
@@ -21,3 +25,5 @@ const settings = {
 };
 
 module.exports = Object.freeze(settings);
+
+// invite URL https://discordapp.com/oauth2/authorize?client_id=692862284212600833&scope=bot&permissions=1565518966

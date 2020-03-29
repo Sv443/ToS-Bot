@@ -1,0 +1,51 @@
+const discord = require("discord.js");
+const jsl = require("svjsl");
+const settings = require("../settings");
+const isDeveloper = require("../src/isDeveloper");
+
+jsl.unused(discord);
+
+const meta = {
+    name: "rm",
+    description: `Removes the last x messages from the chat`,
+    category: "Moderation",
+    permissions: [
+        "MANAGE_MESSAGES"
+    ],
+    arguments: [
+        {
+            name: "amount_of_messages",
+            description: `The amount of messages you want to remove`,
+            optional: false
+        }
+    ]
+};
+
+
+/**
+ * Runs this command
+ * @param {discord.Client} client 
+ * @param {discord.Message} message 
+ * @param {Array<String>} args 
+ */
+function run(client, message, args)
+{
+    try
+    {
+        let amount = parseInt(args[0]);
+
+        if(isNaN(amount) || amount < 1 || amount > settings.commands.rm.maxAmount)
+            message.reply(`The first argument of the command should be a number larger than or equal to 1, and smaller than or equal to ${settings.commands.rm.maxAmount}`);
+
+        if(message.member.hasPermission("MANAGE_MESSAGES") || isDeveloper(message.author.id))
+            message.channel.bulkDelete(amount + 1).catch(err => message.reply(`Error while bulk deleting messages: ${err}`));
+        else message.reply(`I am missing the permission to manage messages. Please contact the administrator(s) of this server.`);
+    }
+    catch(err)
+    {
+        logger("Run", meta.name, `General Error: ${err} - Args: ${args.join(", ")}`);
+    }
+}
+
+module.exports.meta = Object.freeze(meta);
+module.exports.run = run;
