@@ -6,7 +6,7 @@ const meta = {
 
 function run(client, args)
 {
-
+    
 }
 
 module.exports.meta = Object.freeze(meta);

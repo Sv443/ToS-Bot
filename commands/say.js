@@ -1,11 +1,12 @@
 const discord = require("discord.js");
+const logger = require("../src/logger");
 const jsl = require("svjsl");
 const settings = require("../settings");
 
 jsl.unused(discord);
 
 const meta = {
-    name: "say",
+    name: "Say",
     description: `Makes ${settings.name} repeat some text after you`,
     category: "Moderation",
     permissions: [
@@ -17,7 +18,8 @@ const meta = {
             description: `The text you want ${settings.name} to say`,
             optional: false
         }
-    ]
+    ],
+    devOnly: false
 };
 
 
@@ -29,6 +31,7 @@ const meta = {
  */
 function run(client, message, args)
 {
+    jsl.unused(client);
     try
     {
         if(message.deletable)
@@ -41,7 +44,8 @@ function run(client, message, args)
     }
     catch(err)
     {
-        logger("Run", meta.name, `General Error: ${err} - Args: ${args.join(", ")}`);
+        console.log(`Error: ${err}`);
+        logger("Cmd", meta.name, `General Error: ${err} - Args: ${args.join(", ")}`);
     }
 }
 

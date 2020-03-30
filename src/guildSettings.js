@@ -1,4 +1,6 @@
+const jsl = require("svjsl");
 const discord = require("discord.js");
+jsl.unused(discord);
 
 /**
  * @typedef {("general")} GSSection
@@ -11,12 +13,14 @@ const discord = require("discord.js");
  */
 function get(guild, section, setting)
 {
+    jsl.unused(guild, section, setting);
     return null;
 }
 
 function set(guild, section, setting, value)
 {
-    
+    jsl.unused(guild, section, setting, value);
+    return true;
 }
 
 module.exports = { get, set };

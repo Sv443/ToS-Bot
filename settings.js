@@ -1,4 +1,4 @@
-const { resolve, join } = require("path");
+const { resolve } = require("path");
 const package = require("./package.json");
 
 const settings = {
@@ -21,7 +21,13 @@ const settings = {
     },
     events: {
         folder: resolve("./events")
-    }
+    },
+    logs: {
+        wrapperLogFilePath: resolve("./logs/wrapper.log")
+    },
+    createDirs: [
+        "./logs"
+    ]
 };
 
 module.exports = Object.freeze(settings);

@@ -1,4 +1,5 @@
 const discord = require("discord.js");
+const logger = require("../src/logger");
 const jsl = require("svjsl");
 const settings = require("../settings");
 const isDeveloper = require("../src/isDeveloper");
@@ -6,7 +7,7 @@ const isDeveloper = require("../src/isDeveloper");
 jsl.unused(discord);
 
 const meta = {
-    name: "rm",
+    name: "Remove",
     description: `Removes the last x messages from the chat`,
     category: "Moderation",
     permissions: [
@@ -18,7 +19,8 @@ const meta = {
             description: `The amount of messages you want to remove`,
             optional: false
         }
-    ]
+    ],
+    devOnly: false
 };
 
 
@@ -43,7 +45,7 @@ function run(client, message, args)
     }
     catch(err)
     {
-        logger("Run", meta.name, `General Error: ${err} - Args: ${args.join(", ")}`);
+        logger("Cmd", meta.name, `General Error: ${err} - Args: ${args.join(", ")}`);
     }
 }
 
