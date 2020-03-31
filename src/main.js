@@ -5,11 +5,13 @@ const jsl = require("svjsl");
 const col = jsl.colors.fg;
 col.rst = jsl.colors.rst;
 const settings = require("../settings");
+const DBL = require("dblapi.js");
 
 const guildSettings = require("./guildSettings");
 const isDeveloper = require("./isDeveloper");
 
 require("dotenv").config();
+const dbl = new DBL(process.env.DBL_TOKEN, client);
 
 const client = new Discord.Client({
     fetchAllMembers: true,
@@ -42,6 +44,9 @@ function init()
     return new Promise((resolve, reject) => {
         client.login(process.env.BOT_TOKEN).then(() => {
             client.on("message", (msg) => messageReceived(msg));
+
+            postDblStats();
+            setInterval(() => postDblStats(), 12 * 60 * 60 * 1000); // every 12 hours
 
             return resolve();
         }).catch(err => {
@@ -179,6 +184,12 @@ function messageReceived(message)
         }
         else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);
     }
+}
+
+//#SECTION Other
+function postDblStats()
+{
+    dbl.postStats(client.guild.size);
 }
 
 initAll();
