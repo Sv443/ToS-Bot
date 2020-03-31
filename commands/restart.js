@@ -1,7 +1,7 @@
-const discord = require("discord.js");
+const Discord = require("discord.js");
 const jsl = require("svjsl");
 
-jsl.unused(discord);
+jsl.unused(Discord);
 
 const meta = {
     name: "Restart",

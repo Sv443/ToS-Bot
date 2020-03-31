@@ -1,9 +1,9 @@
-const discord = require("discord.js");
+const Discord = require("discord.js");
 const logger = require("../src/logger");
 const jsl = require("svjsl");
 const settings = require("../settings");
 
-jsl.unused(discord);
+jsl.unused(Discord);
 
 const meta = {
     name: "Say",

@@ -1,4 +1,4 @@
-const discord = require("discord.js");
+const Discord = require("discord.js");
 const path = require("path");
 const fs = require("fs");
 const jsl = require("svjsl");
@@ -11,7 +11,7 @@ const isDeveloper = require("./isDeveloper");
 
 require("dotenv").config();
 
-const client = new discord.Client({
+const client = new Discord.Client({
     fetchAllMembers: true,
     presence: {
         status: "online"

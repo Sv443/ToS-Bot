@@ -1,6 +1,6 @@
 const jsl = require("svjsl");
-const discord = require("discord.js");
-jsl.unused(discord);
+const Discord = require("discord.js");
+jsl.unused(Discord);
 
 /**
  * @typedef {("general")} GSSection
