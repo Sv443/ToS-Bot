@@ -11,7 +11,6 @@ const guildSettings = require("./guildSettings");
 const isDeveloper = require("./isDeveloper");
 
 require("dotenv").config();
-const dbl = new DBL(process.env.DBL_TOKEN, client);
 
 const client = new Discord.Client({
     fetchAllMembers: true,
@@ -20,8 +19,15 @@ const client = new Discord.Client({
     }
 });
 
+
+let dbl = {};
+if(settings.enableDblApi)
+    dbl = new DBL(process.env.DBL_TOKEN, client);
+
+
 const commands = [];
 const events = [];
+
 
 //#MARKER Init
 //#SECTION PreInit
@@ -45,8 +51,11 @@ function init()
         client.login(process.env.BOT_TOKEN).then(() => {
             client.on("message", (msg) => messageReceived(msg));
 
-            postDblStats();
-            setInterval(() => postDblStats(), 12 * 60 * 60 * 1000); // every 12 hours
+            if(settings.enableDblApi)
+            {
+                postDblStats();
+                setInterval(() => postDblStats(), 12 * 60 * 60 * 1000); // every 12 hours
+            }
 
             return resolve();
         }).catch(err => {
@@ -154,7 +163,7 @@ function registerEvents()
 
 /**
  * 
- * @param {discord.Message} message 
+ * @param {Discord.Message} message 
  */
 function messageReceived(message)
 {
@@ -189,7 +198,8 @@ function messageReceived(message)
 //#SECTION Other
 function postDblStats()
 {
-    dbl.postStats(client.guild.size);
+    if(settings.enableDblApi)
+        dbl.postStats(client.guilds.size);
 }
 
 initAll();

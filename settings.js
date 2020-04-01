@@ -5,6 +5,7 @@ const settings = {
     name: "ToS-Bot",
     version: package.version.split(".").map(x=>x=parseInt(x)),
     supportServerID: "565933531214118942",
+    enableDblApi: false,
     bot: {
         clientID: "692862284212600833",
         permissionInteger: 1565518966,
@@ -27,7 +28,10 @@ const settings = {
     },
     createDirs: [
         "./logs"
-    ]
+    ],
+    messages: {
+        defaultEmbedColor: "ff0000"
+    }
 };
 
 module.exports = Object.freeze(settings);

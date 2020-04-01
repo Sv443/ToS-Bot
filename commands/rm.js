@@ -26,12 +26,13 @@ const meta = {
 
 /**
  * Runs this command
- * @param {discord.Client} client 
- * @param {discord.Message} message 
+ * @param {Discord.Client} client 
+ * @param {Discord.Message} message 
  * @param {Array<String>} args 
  */
 function run(client, message, args)
 {
+    jsl.unused(client);
     try
     {
         let amount = parseInt(args[0]);
