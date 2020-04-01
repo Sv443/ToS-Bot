@@ -162,7 +162,7 @@ function registerEvents()
 }
 
 /**
- * 
+ * Gets called on received message
  * @param {Discord.Message} message 
  */
 function messageReceived(message)
@@ -188,8 +188,11 @@ function messageReceived(message)
         {
             console.log(`Received command "${command}" with args "${args.join(`", "`)}"`);
 
-            if(!foundCommand.meta.devOnly || (foundCommand.meta.devOnly === true && isDeveloper(message.author.id)))
+            if(!foundCommand.meta.devOnly)
                 foundCommand.run(client, message, args);
+            else if(foundCommand.meta.devOnly === true && isDeveloper(message.author.id))
+                foundCommand.run(client, message, args);
+            else message.channel.send("\\*beep boop\\* Fuck off \\*beep beep\\*");
         }
         else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);
     }

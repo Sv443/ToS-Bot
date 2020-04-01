@@ -30,7 +30,7 @@ const settings = {
         "./logs"
     ],
     messages: {
-        defaultEmbedColor: "ff0000"
+        defaultEmbedColor: "#6472b7"
     }
 };
 

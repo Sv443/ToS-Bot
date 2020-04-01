@@ -28,28 +28,54 @@ function run(client, message, args)
 
         let code = args.join(" ");
 
-        let result = eval(code);
+
         let embed = new Discord.MessageEmbed()
             .setTitle("Execution Result:")
             .setColor(settings.messages.defaultEmbedColor);
 
+        
+        let result;
+        try
+        {
+            result = eval(code);
+        }
+        catch(err)
+        {
+            embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nError: \n\`\`\`\n${err}\`\`\``);
+            embed.setColor("#d6380d");
+
+            message.channel.send(embed).catch(() => {
+                message.author.send(embed).catch(() => {});
+            });
+            
+            return;
+        }
+
         if(result instanceof Promise)
         {
             message.react("📨").then(reaction => {
-                result.then((...args) => {
+                result.then((res) => {
                     reaction.remove();
 
-                    if(typeof result === "object") // TODO: conversion from Object to String
+                    if(typeof res === "object") // TODO: conversion from Object to String
                     {
                         try
                         {
-                            result = JSON.stringify(result, null, 4);
+                            res = JSON.stringify(res, null, 4);
                         }
                         catch(e) // eslint-disable-next-line no-empty
                         {}
                     }
 
-                    embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nResult: \n\`\`\`\n${args.join("\n")}\`\`\``);
+                    embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nResult: \n\`\`\`\n${res}\`\`\``);
+                    embed.setColor("#44c947");
+
+                    message.channel.send(embed).catch(() => {
+                        message.author.send(embed).catch(() => {});
+                    });
+                }).catch(err => {
+                    embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nError: \n\`\`\`\n${err}\`\`\``);
+                    embed.setColor("#d6380d");
 
                     message.channel.send(embed).catch(() => {
                         message.author.send(embed).catch(() => {});
@@ -69,6 +95,7 @@ function run(client, message, args)
                 {}
             }
             embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nResult: \n\`\`\`\n${result}\`\`\``);
+            embed.setColor("#44c947");
             message.channel.send(embed);
         }
     }
