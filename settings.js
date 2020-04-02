@@ -24,7 +24,8 @@ const settings = {
         folder: resolve("./events")
     },
     logs: {
-        wrapperLogFilePath: resolve("./logs/wrapper.log")
+        wrapperLogFilePath: resolve("./logs/wrapper.log"),
+        logFilePath: resolve("./logs/latest.log")
     },
     createDirs: [
         "./logs"
