@@ -31,7 +31,18 @@ const settings = {
         "./logs"
     ],
     messages: {
-        defaultEmbedColor: "#6472b7"
+        defaultEmbedColor: "#6472b7",
+        wordBlacklistFile: resolve("./data/wordBlacklist.json")
+    },
+    sql: {
+        dbHost: "127.0.0.1",
+        dbName: "tosbot",
+        dbPort: 3306,
+        guildSettings: {
+            tableName: "guildsettings",
+            createTableFile: resolve("./data/create_guildsettings.sql")
+        },
+        timeout: 5
     }
 };
 

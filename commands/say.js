@@ -10,7 +10,10 @@ const meta = {
     description: `Makes ${settings.name} repeat some text after you`,
     category: "Moderation",
     permissions: [
-        "KICK_MEMBERS"
+        {
+            scope: "guild",
+            id: "BAN_MEMBERS"
+        }
     ],
     arguments: [
         {

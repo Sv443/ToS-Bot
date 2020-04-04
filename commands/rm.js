@@ -11,11 +11,14 @@ const meta = {
     description: `Removes the last x messages from the chat`,
     category: "Moderation",
     permissions: [
-        "MANAGE_MESSAGES"
+        {
+            scope: "channel",
+            id: "MANAGE_MESSAGES"
+        }
     ],
     arguments: [
         {
-            name: "amount_of_messages",
+            name: "amount",
             description: `The amount of messages you want to remove`,
             optional: false
         }

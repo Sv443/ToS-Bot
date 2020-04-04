@@ -1,0 +1,25 @@
+{
+    "configure": [
+        "set",
+        "settings"
+    ],
+    "exec": [
+        "eval"
+    ],
+    "rm": [
+        "remove",
+        "del",
+        "delete"
+    ],
+    "say": [
+        "echo",
+        "repeat"
+    ],
+    "pruneNewcomers": [
+        "prune",
+        "kickNewcomers"
+    ],
+    "init": [
+        "initialize"
+    ]
+}

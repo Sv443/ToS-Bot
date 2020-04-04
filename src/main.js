@@ -9,6 +9,7 @@ const DBL = require("dblapi.js");
 
 const guildSettings = require("./guildSettings");
 const isDeveloper = require("./isDeveloper");
+const serverLocations = require("./serverLocations");
 
 require("dotenv").config();
 
@@ -34,10 +35,14 @@ const events = [];
 function preInit()
 {
     return new Promise((resolve, reject) => {
-        let promises = [registerCommands(), registerEvents()];
+        let promises = [registerCommands(), registerEvents(), serverLocations.init()];
 
         Promise.all(promises).then(() => {
-            return resolve({ commands, events });
+            return resolve({
+                commands: commands,
+                events: events,
+                serverLocations: serverLocations.locations
+            });
         }).catch(err => {
             return reject(`PreInit Err: ${err}`);
         });
@@ -72,7 +77,8 @@ async function initAll()
         let bot = await preInit();
         
         module.exports.commands = Object.freeze(bot.commands);
-        module.exports.commands = Object.freeze(bot.events);
+        module.exports.events = Object.freeze(bot.events);
+        module.exports.serverLocations = Object.freeze(bot.serverLocations);
 
         init().then(() => {
             let totalGuilds = client.guilds.cache.size;
@@ -192,7 +198,7 @@ function messageReceived(message)
                 foundCommand.run(client, message, args);
             else if(foundCommand.meta.devOnly === true && isDeveloper(message.author.id))
                 foundCommand.run(client, message, args);
-            else message.channel.send("\\*beep boop\\* Fuck off \\*beep beep\\*");
+            else message.channel.send("\\*beep boop\\* You don't look like my master, I'm not letting you use that! \\*beep beep\\*");
         }
         else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);
     }

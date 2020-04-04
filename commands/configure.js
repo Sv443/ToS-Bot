@@ -2,16 +2,18 @@ const Discord = require("discord.js");
 const logger = require("../src/logger");
 const jsl = require("svjsl");
 const settings = require("../settings");
-const isDeveloper = require("../src/isDeveloper");
 
-jsl.unused(Discord);
+jsl.unused(Discord, settings);
 
 const meta = {
     name: "Configure",
     description: `Used to configure bot settings individually for your Discord server. Use the command \`configure help\` for more info.`,
     category: "Moderation",
     permissions: [
-        "MANAGE_GUILD"
+        {
+            scope: "guild",
+            id: "MANAGE_GUILD"
+        }
     ],
     arguments: [
         {
@@ -37,10 +39,9 @@ const meta = {
  */
 function run(client, message, args)
 {
-    jsl.unused(client);
     try
     {
-        
+        jsl.unused(client, message);
     }
     catch(err)
     {

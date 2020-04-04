@@ -2,24 +2,27 @@ const jsl = require("svjsl");
 const Discord = require("discord.js");
 jsl.unused(Discord);
 
-/**
- * @typedef {("general")} GSSection
- */
 
 /**
- * @param {discord.Guild} guild 
- * @param {GSSection} section 
+ * @param {Discord.Guild} guild
  * @param {String} setting 
  */
-function get(guild, section, setting)
+function get(guild, setting)
 {
-    jsl.unused(guild, section, setting);
+    // TODO: all of this
+    jsl.unused(guild, setting);
     return null;
 }
 
-function set(guild, section, setting, value)
+/**
+ * @param {Discord.Guild} guild 
+ * @param {String} setting 
+ * @param {String|Number|null} value
+ */
+function set(guild, setting, value)
 {
-    jsl.unused(guild, section, setting, value);
+    // TODO: all of this
+    jsl.unused(guild, setting, value);
     return true;
 }
 

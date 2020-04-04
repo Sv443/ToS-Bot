@@ -1,8 +1,10 @@
 const Discord = require("discord.js");
 const jsl = require("svjsl");
-jsl.unused(Discord);
 
 const settings = require("../settings");
+
+jsl.unused(Discord, settings);
+
 
 /**
  * Is run when this event gets triggered
@@ -11,7 +13,8 @@ const settings = require("../settings");
  */
 function firstJoin(client, guild)
 {
-
+    jsl.unused(client, guild);
+    // TODO: all of this
 }
 
 module.exports = firstJoin;
