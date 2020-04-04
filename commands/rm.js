@@ -44,7 +44,7 @@ function run(client, message, args)
             message.reply(`The first argument of the command should be a number larger than or equal to 1, and smaller than or equal to ${settings.commands.rm.maxAmount}`);
 
         if(message.member.hasPermission("MANAGE_MESSAGES") || isDeveloper(message.author.id))
-            message.channel.bulkDelete(amount + 1).catch(err => message.reply(`Error while bulk deleting messages: ${err}`));
+            message.channel.bulkDelete(amount + 1).catch(err => message.reply(`Error while bulk deleting messages: ${err}`).then(errMsg => errMsg.delete({timeout: 15000})));
         else message.reply(`I am missing the permission to manage messages. Please contact the administrator(s) of this server.`);
     }
     catch(err)

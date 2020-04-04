@@ -10,6 +10,7 @@ const DBL = require("dblapi.js");
 const guildSettings = require("./guildSettings");
 const isDeveloper = require("./isDeveloper");
 const serverLocations = require("./serverLocations");
+const sql = require("./sql");
 
 require("dotenv").config();
 
@@ -35,7 +36,7 @@ const events = [];
 function preInit()
 {
     return new Promise((resolve, reject) => {
-        let promises = [registerCommands(), registerEvents(), serverLocations.init()];
+        let promises = [registerCommands(), registerEvents(), serverLocations.init(), sql.init()];
 
         Promise.all(promises).then(() => {
             return resolve({
@@ -83,10 +84,11 @@ async function initAll()
         init().then(() => {
             let totalGuilds = client.guilds.cache.size;
             console.log("\n\n");
-            console.log(`${settings.name} is ready to serve in ${totalGuilds} guild${totalGuilds == 1 ? "" : "s"}.`);
-            console.log(`Commands: ${bot.commands.map(c => c = c.name).join(", ")}`);
-            console.log(`Events: ${bot.events.join(", ")}`);
-            console.log("\n");
+            console.log(`${col.blue}${settings.name} is ready to serve in ${totalGuilds} guild${totalGuilds == 1 ? "" : "s"}.${col.rst}\n`);
+            console.log(`${col.yellow}Commands:    ${col.rst}${bot.commands.filter(c => c.meta.devOnly == false).map(c => c = c.name).join(", ")}`);
+            console.log(`${col.yellow}DevCommands: ${col.rst}${bot.commands.filter(c => c.meta.devOnly == true).map(c => c = c.name).join(", ")}`);
+            console.log(`${col.yellow}Events:      ${col.rst}${bot.events.join(", ")}`);
+            process.stdout.write("\n\n> ");
         }).catch(err => {
             console.error(`${col.red}Error while initializing ${settings.name}: ${err}`);
             return process.exit(1);
@@ -116,6 +118,7 @@ function registerCommands()
 
                 try
                 {
+                    // TODO: register aliases
                     let req = require(path.join(settings.commands.folder, itm));
                     commands.push({
                         name: command,
@@ -192,12 +195,11 @@ function messageReceived(message)
 
         if(foundCommand)
         {
-            console.log(`Received command "${command}" with args "${args.join(`", "`)}"`);
-
-            if(!foundCommand.meta.devOnly)
+            if(!foundCommand.meta.devOnly || (foundCommand.meta.devOnly === true && isDeveloper(message.author.id)))
+            {
+                process.stdout.write("*");
                 foundCommand.run(client, message, args);
-            else if(foundCommand.meta.devOnly === true && isDeveloper(message.author.id))
-                foundCommand.run(client, message, args);
+            }
             else message.channel.send("\\*beep boop\\* You don't look like my master, I'm not letting you use that! \\*beep beep\\*");
         }
         else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);

@@ -33,7 +33,7 @@ function run(client, message, args)
             .setTitle("Execution Result:")
             .setColor(settings.messages.defaultEmbedColor);
 
-        
+
         let result;
         try
         {

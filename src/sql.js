@@ -23,7 +23,7 @@ function init()
             password: process.env.DATABASE_PASSWORD || ""
         });
 
-        this.sqlConnection = sqlConnection;
+        process.sqlConnection = sqlConnection;
 
         sqlConnection.connect(err => {
             if(err)
@@ -75,11 +75,11 @@ function init()
  */
 const sendQuery = (query, insertValues) => {
     return new Promise((resolve, reject) => {
-        if(jsl.isEmpty(this.sqlConnection) || (this.sqlConnection && this.sqlConnection.state != "connected" && this.sqlConnection.state != "authenticated"))
-            return reject(`DB connection is not established yet. Current connection state is "${this.sqlConnection.state || "disconnected"}"`);
+        if(jsl.isEmpty(process.sqlConnection) || (process.sqlConnection && process.sqlConnection.state != "connected" && process.sqlConnection.state != "authenticated"))
+            return reject(`DB connection is not established yet. Current connection state is "${process.sqlConnection ? process.sqlConnection.state || "disconnected" : "null"}"`);
 
-        this.sqlConnection.query({
-            sql: (typeof insertValues == "object" && insertValues.length > 0) ? this.sqlConnection.format(query, insertValues) : query,
+        process.sqlConnection.query({
+            sql: (typeof insertValues == "object" && insertValues.length > 0) ? process.sqlConnection.format(query, insertValues) : query,
             timeout: settings.sql.timeout * 1000
         }, (err, result) => {
             if(err)

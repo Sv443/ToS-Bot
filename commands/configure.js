@@ -39,9 +39,10 @@ const meta = {
  */
 function run(client, message, args)
 {
+    jsl.unused(client, message);
     try
     {
-        jsl.unused(client, message);
+        message.channel.send(`Work In Progress!`);
     }
     catch(err)
     {
