@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const path = require("path");
+const debug = require("./debug");
 const fs = require("fs");
 const jsl = require("svjsl");
 const col = jsl.colors.fg;
@@ -37,8 +38,10 @@ function preInit()
 {
     return new Promise((resolve, reject) => {
         let promises = [registerCommands(), registerEvents(), serverLocations.init(), sql.init()];
+        debug("PreInit", `Initializing ${promises.length} components...`);
 
         Promise.all(promises).then(() => {
+            debug("PreInit", `Done initializing all ${promises.length} components`);
             return resolve({
                 commands: commands,
                 events: events,
@@ -54,7 +57,9 @@ function preInit()
 function init()
 {
     return new Promise((resolve, reject) => {
+        debug("Init", `Initializing Discord API connection...`);
         client.login(process.env.BOT_TOKEN).then(() => {
+            debug("Init", `Discord API connection successfully established`);
             client.on("message", (msg) => messageReceived(msg));
 
             if(settings.enableDblApi)
@@ -75,13 +80,16 @@ async function initAll()
 {
     try
     {
+        debug("InitAll", `Calling PreInit...`);
         let bot = await preInit();
+        debug("InitAll", `PreInit has finished, calling Init...`);
         
         module.exports.commands = Object.freeze(bot.commands);
         module.exports.events = Object.freeze(bot.events);
         module.exports.serverLocations = Object.freeze(bot.serverLocations);
 
         init().then(() => {
+            debug("InitAll", `Init has finished, bot is ready to serve`);
             let totalGuilds = client.guilds.cache.size;
             console.log("\n\n");
             console.log(`${col.blue}${settings.name} is ready to serve in ${totalGuilds} guild${totalGuilds == 1 ? "" : "s"}.${col.rst}\n`);
@@ -110,6 +118,8 @@ function registerCommands()
             if(err)
                 return reject(err);
             
+            debug("RegisterCommands", `Found ${files.length} files, trying to register them...`);
+
             files.forEach(itm => {
                 if(!itm.endsWith(".js"))
                     return;
@@ -125,6 +135,7 @@ function registerCommands()
                         meta: req.meta,
                         run: req.run
                     });
+                    debug("RegisterCommands", `Successfully registered the command "${command}"`);
                 }
                 catch(err)
                 {
@@ -145,6 +156,8 @@ function registerEvents()
             if(err)
                 return reject(err);
             
+            debug("RegisterEvents", `Found ${files.length} files, trying to register them...`);
+
             files.forEach(itm => {
                 if(!itm.endsWith(".js"))
                     return;
@@ -158,6 +171,8 @@ function registerEvents()
                     });
 
                     events.push(event);
+
+                    debug("RegisterEvents", `Successfully registered the event "${event}"`);
                 }
                 catch(err)
                 {
@@ -178,6 +193,8 @@ function messageReceived(message)
 {
     if(message.author.bot)
         return;
+
+    debug("MessageReceived", `Received message from ${message.author.tag}`);
 
     let prefix = guildSettings.get(message.guild, "general", "prefix") || settings.bot.defaultPrefix;
     if(prefix.length > 1)
@@ -209,6 +226,7 @@ function messageReceived(message)
 //#SECTION Other
 function postDblStats()
 {
+    debug("PostDblStats", `Sending guild size of ${client.guilds.size} to DBL API`);
     if(settings.enableDblApi)
         dbl.postStats(client.guilds.size);
 }

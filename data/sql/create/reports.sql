@@ -1,0 +1,8 @@
+CREATE TABLE `reports` (
+    `ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReportType` VARCHAR(16) NOT NULL COLLATE 'utf8_bin',
+    `ReportContent` TEXT NOT NULL COLLATE 'utf8_bin',
+    `ReportedTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`ID`)
+)
+COLLATE='utf8_bin';

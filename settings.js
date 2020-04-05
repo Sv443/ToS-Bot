@@ -14,6 +14,9 @@ const settings = {
         ],
         defaultPrefix: "tos"
     },
+    debug: {
+        verboseLogging: true
+    },
     commands: {
         folder: resolve("./commands"),
         rm: {
@@ -38,10 +41,7 @@ const settings = {
         dbHost: "127.0.0.1",
         dbName: "tosbot",
         dbPort: 3306,
-        guildSettings: {
-            tableName: "guildsettings",
-            createTableFile: resolve("./data/create_guildsettings.sql")
-        },
+        createTablesDir: resolve("./data/sql/create/"),
         timeout: 5
     }
 };

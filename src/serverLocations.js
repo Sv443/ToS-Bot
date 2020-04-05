@@ -1,5 +1,7 @@
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
+const debug = require("./debug");
+
 let locations = [];
 module.exports.locations = [];
 
@@ -16,6 +18,7 @@ module.exports.locations = [];
 function init()
 {
     return new Promise((resolve, reject) => {
+        debug("ServerLocations", `Initializing server locations...`);
         let xhr = new XMLHttpRequest();
 
         xhr.open("GET", "https://discordapp.com/api/voice/regions");
@@ -24,22 +27,36 @@ function init()
         xhr.onreadystatechange = () => {
             if(xhr.readyState === 4)
             {
+                debug("ServerLocations", `Request finished with status code ${xhr.status}`);
                 if(xhr.status < 300)
                 {
-                    let resp = JSON.parse(xhr.responseText.toString());
+                    let resp;
 
-                    resp.forEach(itm => {
-                        if(!itm.deprecated)
-                        {
-                            locations.push({
-                                id: itm.id,
-                                name: itm.name
-                            });
-                        }
-                    });
+                    try
+                    {
+                        resp = JSON.parse(xhr.responseText.toString());
 
-                    module.exports.locations = locations;
-                    return resolve(locations);
+                        debug("ServerLocations", `Received ${resp.length} server locations from the Discord API (including deprecated)`);
+
+                        resp.forEach(itm => {
+                            if(!itm.deprecated)
+                            {
+                                locations.push({
+                                    id: itm.id,
+                                    name: itm.name
+                                });
+                            }
+                        });
+
+                        debug("ServerLocations", `Exporting a total of ${locations.length} server locations (${resp.length - locations.length} deprecated locations are excluded)`);
+    
+                        module.exports.locations = locations;
+                        return resolve(locations);
+                    }
+                    catch(err)
+                    {
+                        return reject(`Error while reading server locations from Discord API: ${err}\nXHR Response: ${xhr.status} - ${xhr.responseText}`);
+                    }
                 }
                 else return reject(`Error ${xhr.status} - ${JSON.parse(xhr.responseText.toString()).message}`);
             }
