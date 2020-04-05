@@ -26,7 +26,7 @@ function run(client, message, args)
     jsl.unused(client, args);
     try
     {
-        message.react("✅").catch(err => logger("Cmd", meta.name, `Error while reacting on message: ${err}`));
+        message.react("🏓").catch(err => logger("Cmd", meta.name, `Error while reacting on message: ${err}`));
     }
     catch(err)
     {

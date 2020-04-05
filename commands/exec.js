@@ -74,6 +74,8 @@ function run(client, message, args)
                         message.author.send(embed).catch(() => {});
                     });
                 }).catch(err => {
+                    reaction.remove();
+
                     embed.setDescription(`Code:\n\`\`\`js\n${code}\n\`\`\`\nError: \n\`\`\`\n${err}\`\`\``);
                     embed.setColor("#d6380d");
 

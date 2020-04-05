@@ -17,6 +17,11 @@ const meta = {
     ],
     arguments: [
         {
+            name: "channel",
+            description: `The channel you want the message sent in - leave empty to use the current channel - expected format: #channel`,
+            optional: true
+        },
+        {
             name: "text",
             description: `The text you want ${settings.name} to say`,
             optional: false
@@ -39,9 +44,23 @@ function run(client, message, args)
     {
         if(message.deletable)
             message.delete().then(() => {
-                message.channel.send(args.join(" ")).catch(err => {
-                    message.reply(`Error: ${err}`);
-                });
+                let chn = message.channel;
+
+                try
+                {
+                    if(args[0].match(/<#[0-9]{18}>/))
+                        chn = message.guild.channels.cache.find(ch => ch.id === args[0].substring(2, 20));
+                    
+                    args.shift();
+
+                    chn.send(args.join(" ")).catch(err => {
+                        message.reply(`Error: ${err}`);
+                    });
+                }
+                catch(err)
+                {
+                    message.reply(`there was an error while trying to send your message in ${`<#${chn.id}>` || "(unknown channel)"}>: ${err}`);
+                }
             });
         else message.reply(`I am missing the permission to manage messages or send messages. Please contact the administrator(s) of this server.`).catch(() => {});
     }

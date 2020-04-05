@@ -194,7 +194,7 @@ function messageReceived(message)
     if(message.author.bot)
         return;
 
-    debug("MessageReceived", `Received message from ${message.author.tag}`);
+    debug("MessageReceived", `Received message from "${message.author.tag}" in "${message.guild.name}": "${message.content}"`);
 
     let prefix = guildSettings.get(message.guild, "general", "prefix") || settings.bot.defaultPrefix;
     if(prefix.length > 1)
