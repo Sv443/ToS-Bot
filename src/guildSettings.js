@@ -20,6 +20,9 @@ function get(guild, setting)
             return reject(`Error: parameter "guild" is not set`);
 
         sql.sendQuery(`SELECT * FROM \`${settings.guildSettings.dbTableName}\` WHERE GuildID = ?`, guild.id).then(gs => {
+            if(!gs[0])
+                return resolve(null);
+
             let settingVal = gs[0][setting];
 
             debug("GuildSettings", `Value of "${setting}" is "${settingVal}"`);
@@ -45,7 +48,7 @@ function set(guild, setting, value)
         if(!guild || !guild.id)
             return reject(`Error: parameter "guild" is not set`);
 
-        sql.sendQuery(`UPDATE \`${settings.guildSettings.dbTableName}\` SET \`${setting}\` = ? WHERE GuildID = ?`, value, guild.id).then(res => {
+        sql.sendQuery(`UPDATE \`${settings.guildSettings.dbTableName}\` SET \`${setting}\` = ? WHERE GuildID = ?`, value, guild.id).then(() => {
             debug("GuildSettings", `Set "${setting}" to value "${value}"`);
             return resolve();
         }).catch(err => reject(err));
