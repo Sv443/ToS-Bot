@@ -43,6 +43,9 @@ const settings = {
         dbPort: 3306,
         createTablesDir: resolve("./data/sql/create/"),
         timeout: 5
+    },
+    guildSettings: {
+        dbTableName: "guildsettings"
     }
 };
 

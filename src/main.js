@@ -96,7 +96,39 @@ async function initAll()
             console.log(`${col.yellow}Commands:    ${col.rst}${bot.commands.filter(c => c.meta.devOnly == false).map(c => c = c.name).join(", ")}`);
             console.log(`${col.yellow}DevCommands: ${col.rst}${bot.commands.filter(c => c.meta.devOnly == true).map(c => c = c.name).join(", ")}`);
             console.log(`${col.yellow}Events:      ${col.rst}${bot.events.join(", ")}`);
-            process.stdout.write("\n\n> ");
+
+
+            if(!jsl.inDebugger())
+            {
+                process.stdin.setRawMode(true);
+                process.stdout.write(`\n\n[r] restart - [s] stop  > `);
+                process.stdin.resume();
+        
+                let onData = chunk => {
+                    if(/\u0003/gu.test(chunk)) // eslint-disable-line no-control-regex
+                        process.exit(0);
+                    
+                    chunk = chunk.toString();
+
+                    switch(chunk)
+                    {
+                        case "r":
+                            console.log(`\n\n${col.magenta}Restarting.${col.rst}\n`);
+                            return process.exit(2);
+                        case "s":
+                            console.log(`\n\n${col.red}Stopping.${col.rst}\n`);
+                            return process.exit(0);
+                        default: return;
+                    }
+                }
+        
+                process.stdin.on("data", onData);
+        
+                process.stdin.on("error", err => {
+                    console.error(`${col.red}Error while initializing ${settings.name}: ${err}`);
+                    return process.exit(1);
+                });
+            }
         }).catch(err => {
             console.error(`${col.red}Error while initializing ${settings.name}: ${err}`);
             return process.exit(1);
@@ -191,36 +223,46 @@ function registerEvents()
  */
 function messageReceived(message)
 {
-    if(message.author.bot)
+    if(message.author.bot || message.channel.type == "dm")
         return;
 
     debug("MessageReceived", `Received message from "${message.author.tag}" in "${message.guild.name}": "${message.content}"`);
 
-    let prefix = guildSettings.get(message.guild, "general", "prefix") || settings.bot.defaultPrefix;
-    if(prefix.length > 1)
-        prefix += " ";
-    
-    if(message.content.startsWith(prefix))
-    {
-        let msgParts = message.content.substring(prefix.length).split(" ");
-        let command = msgParts[0];
-
-        msgParts.shift();
-        let args = msgParts;
-
-        let foundCommand = commands.find(cmd => cmd.name === command);
-
-        if(foundCommand)
+    let cont = () => {
+        if(prefix.length > 1)
+            prefix += " ";
+        
+        if(message.content.startsWith(prefix))
         {
-            if(!foundCommand.meta.devOnly || (foundCommand.meta.devOnly === true && isDeveloper(message.author.id)))
+            let msgParts = message.content.substring(prefix.length).split(" ");
+            let command = msgParts[0];
+
+            msgParts.shift();
+            let args = msgParts;
+
+            let foundCommand = commands.find(cmd => cmd.name === command);
+
+            if(foundCommand)
             {
-                process.stdout.write("*");
-                foundCommand.run(client, message, args);
+                if(!foundCommand.meta.devOnly || (foundCommand.meta.devOnly === true && isDeveloper(message.author.id)))
+                {
+                    // process.stdout.write("*");
+                    foundCommand.run(client, message, args);
+                }
+                else message.channel.send("\\*beep boop\\* You don't look like my master, I'm not letting you use that! \\*beep beep\\*");
             }
-            else message.channel.send("\\*beep boop\\* You don't look like my master, I'm not letting you use that! \\*beep beep\\*");
+            else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);
         }
-        else message.reply(`I don't know that command. Use "${prefix}help" to see all available commands.`);
-    }
+    };
+
+    let prefix = settings.bot.defaultPrefix;
+    guildSettings.get(message.guild, "CmdPrefix").then(gsPrefix => {
+        prefix = gsPrefix;
+        cont();
+    }).catch(() => {
+        prefix = settings.bot.defaultPrefix;
+        cont();
+    });
 }
 
 //#SECTION Other

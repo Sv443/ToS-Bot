@@ -22,8 +22,10 @@ function run(client, args)
     
     let message = args[0];
     
-    if(guildSettings.get(message.guild, "CheckBadMsgs") == 1)
-        checkBadMessage(message);
+    guildSettings.get(message.guild, "CheckBadMsgs").then(badMsgs => {
+        if(badMsgs == 1)
+            checkBadMessage(message);
+    });
 }
 
 module.exports.meta = Object.freeze(meta);

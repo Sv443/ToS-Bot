@@ -1,6 +1,8 @@
 const Discord = require("discord.js");
 const jsl = require("svjsl");
+
 const settings = require("../settings");
+const firstJoin = require("../src/firstJoin");
 
 jsl.unused(Discord);
 
@@ -27,8 +29,8 @@ const meta = {
  */
 function run(client, message, args)
 {
-    jsl.unused(client, args);
-    message.channel.send(`Work In Progress`);
+    jsl.unused(args);
+    firstJoin(client, message.guild, message.channel);
 }
 
 module.exports.meta = Object.freeze(meta);

@@ -19,6 +19,9 @@ function init()
     return new Promise((resolve, reject) => {
         debug("SQL", `Initializing SQL connection on "${settings.sql.dbHost}:${settings.sql.dbPort}/${settings.sql.dbName}", as user "${process.env.DATABASE_USER}"`);
 
+        if(!process.env.DATABASE_USER || !process.env.DATABASE_PASSWORD)
+            return reject(`Error while reading .env file: Property DATABASE_USER and/or DATABASE_PASSWORD don't exist or are empty.\nPlease make sure these properties exist in the .env file and are filled in correctly.`);
+
         let sqlConnection = mysql.createConnection({
             database: settings.sql.dbName,
             host: settings.sql.dbHost || "127.0.0.1",
@@ -52,7 +55,7 @@ function init()
                     let tableName = tf.substring(0, tf.length - 4);
 
                     promises.push(new Promise((resolve2, reject2) => {
-                        sendQuery(`SHOW TABLES LIKE ?`, [tableName]).then(res => {
+                        sendQuery(`SHOW TABLES LIKE ?`, tableName).then(res => {
                             if(typeof res != "object" || res.length <= 0 || !Array.isArray(res))
                             {
                                 // table doesn't exist
@@ -103,10 +106,10 @@ function init()
 /**
  * Sends a formatted (SQLI-protected) query
  * @param {String} query The SQL query with question marks where the values are
- * @param {Array<String|Number|null>} [insertValues] An array of values to insert into the question marks - use the primitive type null for an empty value
+ * @param {String|Number|null} insertValues Values to insert into the question marks - use the primitive type null for an empty value
  * @returns {Promise} Returns a Promise - resolves with the query results or rejects with the error string
  */
-const sendQuery = (query, insertValues) => {
+const sendQuery = (query, ...insertValues) => {
     return new Promise((resolve, reject) => {
         if(jsl.isEmpty(process.sqlConnection) || (process.sqlConnection && process.sqlConnection.state != "connected" && process.sqlConnection.state != "authenticated"))
             return reject(`DB connection is not established yet. Current connection state is "${process.sqlConnection ? process.sqlConnection.state || "disconnected" : "null"}"`);
