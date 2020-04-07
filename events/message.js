@@ -3,6 +3,7 @@ const jsl = require("svjsl");
 jsl.unused(Discord);
 
 const settings = require("../settings");
+const sql = require("../src/sql");
 const guildSettings = require("../src/guildSettings");
 const checkBadMessage = require("../src/checkBadMessage");
 
@@ -21,11 +22,30 @@ function run(client, args)
     jsl.unused(client);
     
     let message = args[0];
+    let guild = message.guild;
+    let user = message.author;
     
-    guildSettings.get(message.guild, "CheckBadMsgs").then(badMsgs => {
+    guildSettings.get(guild, "CheckBadMsgs").then(badMsgs => {
         if(badMsgs == 1)
             checkBadMessage(message);
     });
+
+    sql.sendQuery(`SELECT * FROM \`${settings.commands.mute.dbTableName}\` WHERE UserID = ?`, user.id).then(res => {
+        if(res.length > 0)
+        {
+            res.forEach(entry => {
+                if(entry["GuildID"] == guild.id)
+                {
+                    return message.delete().catch(err => {
+                        guildSettings.get(guild, "LogChannelID").then(logChannel => {
+                            if(logChannel)
+                                guild.channels.cache.find(ch => ch.id === logChannel).send(`Error while deleting message of muted user ${user}: ${err}`).catch(() => {});
+                        })
+                    });
+                }
+            });
+        }
+    }).catch(() => {})
 }
 
 module.exports.meta = Object.freeze(meta);

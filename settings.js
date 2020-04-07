@@ -21,6 +21,9 @@ const settings = {
         folder: resolve("./commands"),
         rm: {
             maxAmount: 100
+        },
+        mute: {
+            dbTableName: "mutedusers"
         }
     },
     events: {
