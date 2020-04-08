@@ -16,9 +16,9 @@ const badWordResponses = [
  */
 function checkBadMessage(message)
 {
-    let originalMessageContent = message.content.toLowerCase();
-    let messageContent = message.content.toLowerCase().replace(/([|^`´?.\-_,\s*])/gm, "");
-    let messageLightCheckContent = message.content.toLowerCase();
+    let originalMessageContent = message.content;
+    let messageLightCheckContent = originalMessageContent.toLowerCase();
+    let messageContent = messageLightCheckContent.replace(/([|^`´?.\-_,\s*])/gm, "");
 
     guildSettings.get(message.guild, "LogChannelID").then(botLogsID => {
         let isbadword = false, lightcheckisbadword = false, triggerWords = [], triggerWordsLight = [];
@@ -49,49 +49,100 @@ function checkBadMessage(message)
 
         if(isbadword && botLogs)
         {
+            //spacer: .addField("\u200b", "\u200b")
             let embed = new Discord.MessageEmbed()
-                .setTitle(`‼ There could have been a bad word in the following message:`)
-                .addField("User:", `${message.author}`, true)
+                .setTitle(`⚠️ There could have been a bad word in a member's message`)
+                .addField("User:", `${message.author} / \`${message.author.tag}\``, true)
                 .addField("Channel:", `${message.channel}`, true)
-                .addField("\u200b", "\u200b")
                 .addField("Content:", `\`\`\`\n${originalMessageContent.replace(/`/gm, "´")}\n\`\`\``, false)
-                .addField("\u200b", "\u200b")
-                .addField(`Triggered on word${triggerWords.length == 1 ? "" : "s"}:`, `\`\`\`\n${triggerWords.join(", ")}\`\`\``, true)
-                .addField("\u200b", "\u200b")
-                .setDescription(lightcheckisbadword ? "**I deleted their message as the chance the message was toxic was pretty high.**" : "**I didn't delete their message as the chance the message was toxic was too low.**")
+                .addField(`Triggered on word${triggerWords.length == 1 ? "" : "s"}:`, triggerWords.join(", "), true)
+                .setDescription("I didn't delete their message as the chance the message was toxic was too low.\nIf you want this message to be deleted, click on the trash can reaction within the next five hours (you need the \"Manage Messages\" permission).\n\u200b")
                 .setColor("#ffaa00")
                 .setFooter(`(\` replaced with ´) - ${new Date().toUTCString()}`);
 
             if(!lightcheckisbadword)
-                botLogs.send(embed);
+            {
+                botLogs.send(embed).then(blMsg => {
+                    blMsg.react("🗑").then(() => {
+                        let filter = (reaction, user) => ["🗑"].includes(reaction.emoji.name) && user.id === message.author.id && !user.bot;
+
+                        blMsg.awaitReactions(filter, {
+                            max: 1,
+                            time: 1000 * 60 * 60 * 5,
+                            errors: ["time"]
+                        }).then(collected => {
+                            let reaction = collected.first();
+
+                            if(reaction.emoji.name === "🗑")
+                            {
+                                collected.first().users.cache.array().forEach(user => {
+                                    if(user instanceof Discord.User)
+                                    {
+                                        if(message.channel.permissionsFor(user).has("MANAGE_MESSAGES"))
+                                        {
+                                            let embed2 = new Discord.MessageEmbed()
+                                                .setTitle(`⚠️ There could have been a bad word in a member's message`)
+                                                .addField("User:", `${message.author} / \`${message.author.tag}\``, true)
+                                                .addField("Channel:", `${message.channel}`, true)
+                                                .addField("Content:", `\`\`\`\n${originalMessageContent.replace(/`/gm, "´")}\n\`\`\``, false)
+                                                .addField(`Triggered on word${triggerWords.length == 1 ? "" : "s"}:`, triggerWords.join(", "), true)
+                                                .setDescription(`I didn't delete their message as the chance the message was toxic was too low.\nEdit: A manual deletion was triggered by the user ${user} / \`${user.tag}\`\n\u200b`)
+                                                .setColor("#ffaa00")
+                                                .setFooter(`(\` replaced with ´) - ${new Date().toUTCString()}`);
+                                            blMsg.edit(embed2);
+
+                                            message.delete();
+                                            blMsg.reactions.removeAll().then(() => {
+                                                blMsg.react("✅").then(() => setTimeout(() => {
+                                                    blMsg.reactions.removeAll().catch(() => {});
+                                                }, 3000)).catch(() => {});
+                                            }).catch(() => {});
+                                        }
+                                    }
+                                });
+                            }
+                        }).catch(() => {});
+                    }).catch(() => {});
+                }).catch(() => {});
+            }
         }
 
         if(lightcheckisbadword)
         {
             let response = badWordResponses[jsl.randRange(0, badWordResponses.length - 1)];
             message.channel.send(response.replace("%USER%", message.member)).then(() => {}).catch(() => {});
-            message.author.send(`You might have said a bad word which I had to filter out!\n\n**Channel:** \`#${message.channel.name}\`\n\n**Message:**\n\`\`\`${originalMessageContent}\`\`\`\n\n**The filter triggered on the ${(triggerWords.length <= 1 ? "word:** `" : "words:** `") + jsl.readableArray(triggerWords, ", ", " and ")}\`\n\nThanks for understanding.`).catch(() => {});
+
+            let uEmbed = new Discord.MessageEmbed()
+                .setTitle("The bad word filter was triggered on your message")
+                .setDescription(`You have said ${triggerWords.length == 1 ? "a bad word" : "bad words"} in the server "${message.guild.name}" which I had to filter out.`)
+                .addField("Channel:", `[\`#${message.channel.name}\`](https://discordapp.com/channels/${message.guild.id}/${message.channel.id})`, true)
+                .addField("Filter triggered on:", triggerWords.join(", "), true)
+                .addField("Original Message:", `\`\`\`\n${originalMessageContent.replace(/`/g, "´")}\`\`\``)
+                .setColor("#ee3333")
+                .setFooter(`(\` replaced with ´) - ${new Date().toUTCString()}`);
+            message.author.send(uEmbed).catch(() => {});
+
             message.delete().then(() => {
                 if(!message.author.bot && botLogs)
                 {
                     let embed = new Discord.MessageEmbed()
                         .setTitle(`‼ Bad word filter was triggered, message was deleted`)
-                        .addField("User:", `${message.author}`, true)
+                        .addField("User:", `${message.author} / \`${message.author.tag}\``, true)
                         .addField("Channel:", `${message.channel}`, true)
-                        .addField("\u200b", "\u200b")
                         .addField("Content:", `\`\`\`\n${originalMessageContent.replace(/`/gm, "´")}\n\`\`\``, false)
-                        .addField("\u200b", "\u200b")
-                        .addField(`Triggered on word${triggerWords.length == 1 ? "" : "s"}:`, `\`\`\`\n${triggerWords.join(", ")}\`\`\``, true)
-                        .setColor("#ff0000")
+                        .addField(`Triggered on word${triggerWords.length == 1 ? "" : "s"}:`, triggerWords.join(", "), true)
+                        .setColor("#ee3333")
                         .setFooter(`(\` replaced with ´) - ${new Date().toUTCString()}`);
 
                     if(isbadword && lightcheckisbadword)
                         return botLogs.send(embed).then(() => {}).catch(() => {});
                     else return;
                 }
-            }).catch(() => {});
+            }).catch(() => {
+                return botLogs.send(`I tried to remove a toxic message in the channel #${message.channel.name} just now but I am missing the permissions to do so.`);
+            });
         }
-    });
+    }).catch(() => {});
 }
 
 module.exports = checkBadMessage;
