@@ -39,13 +39,13 @@ function run(client, args)
                     return message.delete().catch(err => {
                         guildSettings.get(guild, "LogChannelID").then(logChannel => {
                             if(logChannel)
-                                guild.channels.cache.find(ch => ch.id === logChannel).send(`Error while deleting message of muted user ${user}: ${err}`).catch(() => {});
-                        })
+                                guild.channels.cache.find(ch => ch.id === logChannel).send(`Error while deleting message of muted user ${user}: ${err}`)/*.catch(() => {})*/;
+                        })/*.catch(() => {})*/;
                     });
                 }
             });
         }
-    }).catch(() => {})
+    })/*.catch(() => {})*/
 }
 
 module.exports.meta = Object.freeze(meta);

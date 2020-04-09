@@ -62,7 +62,7 @@ function run(client, message, args)
                     message.reply(`there was an error while trying to send your message in ${`<#${chn.id}>` || "(unknown channel)"}>: ${err}`);
                 }
             });
-        else message.reply(`I am missing the permission to manage messages or send messages. Please contact the administrator(s) of this server.`).catch(() => {});
+        else message.reply(`I am missing the permission to manage messages or send messages. Please contact the administrator(s) of this server.`)/*.catch(() => {})*/;
     }
     catch(err)
     {

@@ -45,7 +45,7 @@ const settings = {
         dbName: "tosbot",
         dbPort: 3306,
         createTablesDir: resolve("./data/sql/create/"),
-        timeout: 5
+        timeout: 10
     },
     guildSettings: {
         dbTableName: "guildsettings"

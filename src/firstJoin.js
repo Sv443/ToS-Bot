@@ -33,12 +33,12 @@ function firstJoin(client, guild, channel)
                         guild.channels.cache.array().forEach(chn => {
                             if(chn.memberPermissions(guild.members.cache.find(m => m.id == client.user.id).hasPermission("SEND_MESSAGES")))
                                 chn.send(joinMsg).catch(() => {
-                                    guild.owner.send(joinMsg).catch(() => {});
+                                    guild.owner.send(joinMsg)/*.catch(() => {})*/;
                                 });
                         });
                     }
                     else channel.send(joinMsg).catch(() => {
-                        guild.owner.send(joinMsg).catch(() => {});
+                        guild.owner.send(joinMsg)/*.catch(() => {})*/;
                     });
                 }
                 else
@@ -48,16 +48,16 @@ function firstJoin(client, guild, channel)
                         guild.channels.cache.array().forEach(chn => {
                             if(chn.memberPermissions(guild.members.cache.find(m => m.id == client.user.id).hasPermission("SEND_MESSAGES")))
                                 chn.send(alreadyExistsMsg).catch(() => {
-                                    guild.owner.send(alreadyExistsMsg).catch(() => {});
+                                    guild.owner.send(alreadyExistsMsg)/*.catch(() => {})*/;
                                 });
                         });
                     }
                     else channel.send(alreadyExistsMsg).catch(() => {
-                        guild.owner.send(alreadyExistsMsg).catch(() => {});
+                        guild.owner.send(alreadyExistsMsg)/*.catch(() => {})*/;
                     });
                 }
             }).catch(err => {
-                guild.owner.send(`Hi, I am ${settings.name} and I was just added to your server, ${guild.name}.\nThere was an error while running the first join procedure and I might not work as expected.\nPlease run the command \`${settings.bot.defaultPrefix} init\` in the server to re-run the first join procedure.\n\nError message: ${err}`).catch(() => {});
+                guild.owner.send(`Hi, I am ${settings.name} and I was just added to your server, ${guild.name}.\nThere was an error while running the first join procedure and I might not work as expected.\nPlease run the command \`${settings.bot.defaultPrefix} init\` in the server to re-run the first join procedure.\n\nError message: ${err}`)/*.catch(() => {})*/;
             });
         }
         else
@@ -67,16 +67,16 @@ function firstJoin(client, guild, channel)
                 guild.channels.cache.array().forEach(chn => {
                     if(chn.memberPermissions(guild.members.cache.find(m => m.id == client.user.id).hasPermission("SEND_MESSAGES")))
                         chn.send(alreadyExistsMsg).catch(() => {
-                            guild.owner.send(alreadyExistsMsg).catch(() => {});
+                            guild.owner.send(alreadyExistsMsg)/*.catch(() => {})*/;
                         });
                 });
             }
             else channel.send(alreadyExistsMsg).catch(() => {
-                guild.owner.send(alreadyExistsMsg).catch(() => {});
+                guild.owner.send(alreadyExistsMsg)/*.catch(() => {})*/;
             });
         }
     }).catch(err => {
-        guild.owner.send(`Hi, I am ${settings.name} and I was just added to your server, ${guild.name}.\nThere was an error while running the first join procedure and I might not work as expected.\nPlease run the command \`${settings.bot.defaultPrefix} init\` in the server to re-run the first join procedure.\n\nError message: ${err}`).catch(() => {});
+        guild.owner.send(`Hi, I am ${settings.name} and I was just added to your server, ${guild.name}.\nThere was an error while running the first join procedure and I might not work as expected.\nPlease run the command \`${settings.bot.defaultPrefix} init\` in the server to re-run the first join procedure.\n\nError message: ${err}`)/*.catch(() => {})*/;
     });
 }
 

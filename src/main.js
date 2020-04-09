@@ -60,7 +60,7 @@ function init()
         debug("Init", `Initializing Discord API connection...`);
         client.login(process.env.BOT_TOKEN).then(() => {
             debug("Init", `Discord API connection successfully established`);
-            client.on("message", (msg) => messageReceived(msg));
+            client.once("message", (msg) => messageReceived(msg));
 
             if(settings.enableDblApi)
             {
@@ -175,6 +175,8 @@ function registerCommands()
                 }
             });
 
+            debug("RegisterCommands", `Registered ${commands.length} of ${files.length} commands`);
+
             return resolve();
         });
     });
@@ -198,7 +200,7 @@ function registerEvents()
 
                 try
                 {
-                    client.on(event, (...args) => {
+                    client.once(event, (...args) => {
                         require(path.join(settings.events.folder, itm)).run(client, args);
                     });
 
@@ -211,6 +213,8 @@ function registerEvents()
                     return reject(`RegisterEvents Err while registering event "${event}": ${err}`);
                 }
             });
+
+            debug("RegisterEvents", `Registered ${events.length} of ${files.length} events`);
 
             return resolve();
         });
@@ -232,8 +236,11 @@ function messageReceived(message)
         if(prefix.length > 1)
             prefix += " ";
         
-        if(message.content.startsWith(prefix))
+        if(message.content.startsWith(prefix) || message.content.startsWith("tos "))
         {
+            if(message.content.startsWith("tos "))
+                prefix = "tos ";
+
             let msgParts = message.content.substring(prefix.length).split(" ");
             let command = msgParts[0];
 

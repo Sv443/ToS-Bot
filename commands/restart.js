@@ -21,7 +21,7 @@ function run(client, message, args)
 
     message.react("✅").then(() => {
         // Exit with code 2 triggers a restart:
-        message.delete({timeout: 500}).then(() => process.exit(2)).catch(() => {});
+        message.delete({timeout: 500}).then(() => process.exit(2))/*.catch(() => {})*/;
     });
 }
 

@@ -45,7 +45,7 @@ function run(client, message, args)
             embed.setColor("#d6380d");
 
             message.channel.send(embed).catch(() => {
-                message.author.send(embed).catch(() => {});
+                message.author.send(embed)/*.catch(() => {})*/;
             });
             
             return;
@@ -57,7 +57,7 @@ function run(client, message, args)
                 result.then((res) => {
                     reaction.remove();
 
-                    if(typeof res === "object") // TODO: conversion from Object to String
+                    if(typeof res === "object")
                     {
                         try
                         {
@@ -71,7 +71,7 @@ function run(client, message, args)
                     embed.setColor("#44c947");
 
                     message.channel.send(embed).catch(() => {
-                        message.author.send(embed).catch(() => {});
+                        message.author.send(embed)/*.catch(() => {})*/;
                     });
                 }).catch(err => {
                     reaction.remove();
@@ -80,7 +80,7 @@ function run(client, message, args)
                     embed.setColor("#d6380d");
 
                     message.channel.send(embed).catch(() => {
-                        message.author.send(embed).catch(() => {});
+                        message.author.send(embed)/*.catch(() => {})*/;
                     });
                 });
             });
